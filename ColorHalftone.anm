@@ -8,13 +8,13 @@
 local check1 = _0
 local check2 = _1
 local check3 = _2
-_0 = 0 _1 = 0 _2 = 0
+_0 = nil _1 = nil _2 = nil
 
 local r0, g0, b0 = RGB(_3)
 local r1, g1, b1 = RGB(_4)
 local r2, g2, b2 = RGB(_5)
 local r3, g3, b3 = RGB(_6)
-_3 = 0 _4 = 0 _5 = 0 _6 = 0
+_3 = nil _4 = nil _5 = nil _6 = nil
 
 local mode = ((tonumber(_7) or 0) <= 0) and 0 or 1
 local invert = _8
@@ -26,7 +26,7 @@ if _9 then
     angle2 = tonumber(_9[2]) or 0
     angle3 = tonumber(_9[3]) or 0
 end
-_9 = 0
+_9 = nil
 
 local border1, border2, border3
 if _10 then
@@ -34,7 +34,7 @@ if _10 then
     border2 = (tonumber(_10[2]) or -1) * 0.01
     border3 = (tonumber(_10[3]) or -1) * 0.01
 end
-_10 = 0
+_10 = nil
 
 local min_size1, min_size2, min_size3
 if _11 then
@@ -42,7 +42,7 @@ if _11 then
     min_size2 = (tonumber(_11[2]) or -101) * 0.01
     min_size3 = (tonumber(_11[3]) or -101) * 0.01
 end
-_11 = 0
+_11 = nil
 
 local weight1, weight2, weight3
 if _12 then
@@ -50,7 +50,7 @@ if _12 then
     weight2 = (tonumber(_12[2]) or -1) * 0.01
     weight3 = (tonumber(_12[3]) or -1) * 0.01
 end
-_12 = 0
+_12 = nil
 
 local GLShaderKit = require "GLShaderKit"
 
