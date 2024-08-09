@@ -1,0 +1,98 @@
+--track0:サイズ,0,100,50
+--track1:ぼかし幅,0,100,40
+--track2:最小サイズ,-100,100,0
+--track3:変化率,0,100,100
+--check0:再読込,0
+--dialog:色1[表示]/chk,_0=1; 色2[表示]/chk,_1=1;色3[表示]/chk,_2=1;色1/col,_3=0x00ffff;色2/col,_4=0xff00ff;色3/col,_5=0xffff00;背景色/col,_6=0xffffff;モード[0-1],_7=0;反転/chk,_8=0;角度,_9={15,75,30};ぼかし幅,_10={nil,nil,nil};最小サイズ,_11={nil,nil,nil};変化率,_12={nil,nil,nil}; 
+
+local check1 = _0
+local check2 = _1
+local check3 = _2
+_0 = 0 _1 = 0 _2 = 0
+
+local r0, g0, b0 = RGB(_3)
+local r1, g1, b1 = RGB(_4)
+local r2, g2, b2 = RGB(_5)
+local r3, g3, b3 = RGB(_6)
+_3 = 0 _4 = 0 _5 = 0 _6 = 0
+
+local mode = ((tonumber(_7) or 0) <= 0) and 0 or 1
+local invert = _8
+_7 = nil _8 = nil
+
+local angle1, angle2, angle3
+if _9 then
+    angle1 = tonumber(_9[1]) or 0
+    angle2 = tonumber(_9[2]) or 0
+    angle3 = tonumber(_9[3]) or 0
+end
+_9 = 0
+
+local border1, border2, border3
+if _10 then
+    border1 = (tonumber(_10[1]) or -1) * 0.01
+    border2 = (tonumber(_10[2]) or -1) * 0.01
+    border3 = (tonumber(_10[3]) or -1) * 0.01
+end
+_10 = 0
+
+local min_size1, min_size2, min_size3
+if _11 then
+    min_size1 = (tonumber(_11[1]) or -101) * 0.01
+    min_size2 = (tonumber(_11[2]) or -101) * 0.01
+    min_size3 = (tonumber(_11[3]) or -101) * 0.01
+end
+_11 = 0
+
+local weight1, weight2, weight3
+if _12 then
+    weight1 = (tonumber(_12[1]) or -1) * 0.01
+    weight2 = (tonumber(_12[2]) or -1) * 0.01
+    weight3 = (tonumber(_12[3]) or -1) * 0.01
+end
+_12 = 0
+
+local GLShaderKit = require "GLShaderKit"
+
+local shader_path = obj.getinfo("script_path") .. "ColorHalftone.frag"
+local force_reload = obj.check0
+
+local VERTEX_NUM = 1
+
+local data, w, h = obj.getpixeldata()
+
+if GLShaderKit.isInitialized() then
+    GLShaderKit.activate()
+    GLShaderKit.setPlaneVertex(VERTEX_NUM)
+    GLShaderKit.setShader(shader_path, force_reload)
+    GLShaderKit.setFloat("resolution", w, h)
+    GLShaderKit.setFloat("time", obj.time)
+    GLShaderKit.setFloat("totalTime", obj.totaltime)
+    GLShaderKit.setInt("frame", obj.frame)
+    GLShaderKit.setInt("totalFrame", obj.totalframe)
+    GLShaderKit.setFloat("track", (100 - obj.track0) * (math.min(w, h)/200.0), obj.track1*0.01, obj.track2*0.01, obj.track3*0.01)
+
+    GLShaderKit.setFloat("color1", r0/255, g0/255, b0/255)
+    GLShaderKit.setFloat("color2", r1/255, g1/255, b1/255)
+    GLShaderKit.setFloat("color3", r2/255, g2/255, b2/255)
+    GLShaderKit.setFloat("color4", r3/255, g3/255, b3/255)
+    GLShaderKit.setFloat("angle", angle1, angle2, angle3)
+    GLShaderKit.setInt("check", check1, check2, check3)
+    GLShaderKit.setFloat("border", border1, border2, border3)
+    GLShaderKit.setFloat("min_size", min_size1, min_size2, min_size3)
+    GLShaderKit.setFloat("weight", weight1, weight2, weight3)
+    GLShaderKit.setInt("mode", mode)
+    GLShaderKit.setInt("invert", invert)
+
+    GLShaderKit.setTexture2D(0, data, w, h)
+    GLShaderKit.draw("TRIANGLES", data, w, h)
+
+    GLShaderKit.deactivate()
+else
+    obj.setfont("MS UI Gothic", obj.track2 + 30)
+    obj.load("text", "ColorHalftone is not available on this device.\nColorHalftoneはこのデバイスでは使用できません。")
+    obj.draw()
+    --参考 https://github.com/Mr-Ojii/AviUtl-RotBlur_M-Script/blob/main/script/RotBlur_M.anm#L59-L63
+end
+
+obj.putpixeldata(data)
