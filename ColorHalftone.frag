@@ -68,9 +68,9 @@ vec4 colorHalftone(sampler2D texture0, vec3 angle, vec3 colors[4], vec3 borders,
          uv.y = mix((uv.y - 0.5) * aspect_ratio + 0.5, uv.y, step(1.0, aspect_ratio));
          
          vec4 tex_color = texture2D(texture0, uv);
-         vec4 cmyk_color = rgbaToCmyk(tex_color);
+         tex_color = mix(rgbaToCmyk(tex_color), tex_color, step(1.0, mode));
 
-         float circle_radius = 0.5 * min_size + 0.5 * weight * mix(cmyk_color[i], 1.0 - cmyk_color[i], step(1.0, invert));
+         float circle_radius = 0.5 * min_size + 0.5 * weight * mix(tex_color[i], 1.0 - tex_color[i], step(1.0, invert));
          float dist = length(neighbor + center - f_st);
          
          float circle_edge = smoothstep(circle_radius, circle_radius + border, dist);
