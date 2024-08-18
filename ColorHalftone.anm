@@ -1,9 +1,9 @@
---track0:サイズ,0,100,50
---track1:ぼかし幅,0,100,40
---track2:最小サイズ,-100,100,0
---track3:変化率,0,100,100
+--track0:サイズ,0,1000,100
+--track1:ぼかし幅,0,100,0
+--track2:最小サイズ,0,100,0
+--track3:最大サイズ,0,200,110
 --check0:再読込,0
---dialog:色1[表示]/chk,_0=1; 色2[表示]/chk,_1=1;色3[表示]/chk,_2=1;色1/col,_3=0x00ffff;色2/col,_4=0xff00ff;色3/col,_5=0xffff00;背景色/col,_6=0xffffff;モード[0-1],_7=0;反転/chk,_8=0;角度,_9={15,75,30};ぼかし幅,_10={nil,nil,nil};最小サイズ,_11={nil,nil,nil};変化率,_12={nil,nil,nil}; 
+--dialog:色1[表示]/chk,_0=1;色2[表示]/chk,_1=1;色3[表示]/chk,_2=1;色1/col,_3=0x00ffff;色2/col,_4=0xff00ff;色3/col,_5=0xffff00;背景色/col,_6=0xffffff;モード[0-1],_7=0;反転/chk,_8=0;滑らかさ[0-100],_9=1;角度,_10={15,75,30};ぼかし幅,_11={nil,nil,nil};最小サイズ,_12={nil,nil,nil};最大サイズ,_13={nil,nil,nil}; 
 
 local check1 = _0
 local check2 = _1
@@ -18,39 +18,41 @@ _3 = nil _4 = nil _5 = nil _6 = nil
 
 local mode = ((tonumber(_7) or 0) <= 0) and 0 or 1
 local invert = _8
-_7 = nil _8 = nil
+local blur = math.min(tonumber(_9) or 0, 100)
+obj.effect("ぼかし", "範囲", blur, "縦横比", 0, "光の強さ", 0, "サイズ固定", 1)
+_7 = nil _8 = nil _9 = nil
 
 local angle1, angle2, angle3
-if _9 then
-    angle1 = tonumber(_9[1]) or 0
-    angle2 = tonumber(_9[2]) or 0
-    angle3 = tonumber(_9[3]) or 0
-end
-_9 = nil
-
-local border1, border2, border3
 if _10 then
-    border1 = (tonumber(_10[1]) or -1) * 0.01
-    border2 = (tonumber(_10[2]) or -1) * 0.01
-    border3 = (tonumber(_10[3]) or -1) * 0.01
+    angle1 = tonumber(_10[1]) or 0
+    angle2 = tonumber(_10[2]) or 0
+    angle3 = tonumber(_10[3]) or 0
 end
 _10 = nil
 
-local min_size1, min_size2, min_size3
+local border1, border2, border3
 if _11 then
-    min_size1 = (tonumber(_11[1]) or -101) * 0.01
-    min_size2 = (tonumber(_11[2]) or -101) * 0.01
-    min_size3 = (tonumber(_11[3]) or -101) * 0.01
+    border1 = (tonumber(_11[1]) or -1) * 0.01
+    border2 = (tonumber(_11[2]) or -1) * 0.01
+    border3 = (tonumber(_11[3]) or -1) * 0.01
 end
 _11 = nil
 
-local weight1, weight2, weight3
+local min_size1, min_size2, min_size3
 if _12 then
-    weight1 = (tonumber(_12[1]) or -1) * 0.01
-    weight2 = (tonumber(_12[2]) or -1) * 0.01
-    weight3 = (tonumber(_12[3]) or -1) * 0.01
+    min_size1 = (tonumber(_12[1]) or -1) * 0.01
+    min_size2 = (tonumber(_12[2]) or -1) * 0.01
+    min_size3 = (tonumber(_12[3]) or -1) * 0.01
 end
 _12 = nil
+
+local max_size1, max_size2, max_size3
+if _13 then
+    max_size1 = (tonumber(_13[1]) or -1) * 0.01
+    max_size2 = (tonumber(_13[2]) or -1) * 0.01
+    max_size3 = (tonumber(_13[3]) or -1) * 0.01
+end
+_13 = nil
 
 local GLShaderKit = require "GLShaderKit"
 
@@ -70,7 +72,7 @@ if GLShaderKit.isInitialized() then
     GLShaderKit.setFloat("totalTime", obj.totaltime)
     GLShaderKit.setInt("frame", obj.frame)
     GLShaderKit.setInt("totalFrame", obj.totalframe)
-    GLShaderKit.setFloat("track", (100 - obj.track0) * (math.min(w, h)/200.0), obj.track1*0.01, obj.track2*0.01, obj.track3*0.01)
+    GLShaderKit.setFloat("track", (500 - obj.track0 * 0.5) * (math.min(w, h)/2000.0), obj.track1*0.01, obj.track2*0.01, obj.track3*0.01)
 
     GLShaderKit.setFloat("color1", r0/255, g0/255, b0/255)
     GLShaderKit.setFloat("color2", r1/255, g1/255, b1/255)
@@ -80,7 +82,7 @@ if GLShaderKit.isInitialized() then
     GLShaderKit.setInt("check", check1, check2, check3)
     GLShaderKit.setFloat("border", border1, border2, border3)
     GLShaderKit.setFloat("min_size", min_size1, min_size2, min_size3)
-    GLShaderKit.setFloat("weight", weight1, weight2, weight3)
+    GLShaderKit.setFloat("max_size", max_size1, max_size2, max_size3)
     GLShaderKit.setInt("mode", mode)
     GLShaderKit.setInt("invert", invert)
 
