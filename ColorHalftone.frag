@@ -67,7 +67,7 @@ vec4 colorHalftone(sampler2D texture0, vec3 angle, vec3 colors[4], vec3 borders,
 
          vec3 cmy_color = rgbToCmy(tex_color.rgb);
          vec3 color_value = mix(cmy_color, tex_color.rgb, step(1.0, mode));
-         color_value.rgb = sqrt(color_value.rgb / vec3(1.0));
+         color_value.rgb = mix(sqrt(color_value.rgb / vec3(1.0)), color_value.rgb, step(1.0, mode));
 
          float circle_radius = 0.5 * min_size + 0.5 * max_size * mix(color_value[i], 1.0 - color_value[i], step(1.0, invert));
          float dist = length(neighbor + center - f_st);
