@@ -12,12 +12,12 @@ uniform vec3 color2;
 uniform vec3 color3;
 uniform vec3 color4;
 uniform vec3 angle;
-uniform ivec3 check;
+uniform vec3 check;
 uniform vec3 border;
 uniform vec3 min_size;
 uniform vec3 max_size;
-uniform int mode;
-uniform int invert;
+uniform float mode;
+uniform float invert;
 
 vec3 rgbToCmy(vec3 rgb) {
    return vec3(1.0) - rgb;
@@ -31,7 +31,7 @@ vec2 rotate2D(vec2 st, float angle, vec2 center) {
    return st;
 }
 
-vec4 colorHalftone(sampler2D texture0, vec3 angle, vec3 colors[4], vec3 borders, vec3 min_sizes, vec3 max_sizes, float t1, float t2, float t3, float t4, int invert, int mode, int i) {
+vec4 colorHalftone(sampler2D texture0, vec3 angle, vec3 colors[4], vec3 borders, vec3 min_sizes, vec3 max_sizes, float t1, float t2, float t3, float t4, float invert, float mode, int i) {
    vec2 st = gl_FragCoord.xy / resolution.xy;
    float aspect_ratio = resolution.x / resolution.y;
    vec2 center = vec2(0.5);
@@ -90,10 +90,10 @@ void main() {
    vec4 result_color2 = mix(vec4(1.0), vec4(0.0, 0.0, 0.0, 1.0), step(1.0, mode));
    vec4 result_color3 = mix(vec4(1.0), vec4(0.0, 0.0, 0.0, 1.0), step(1.0, mode));
 
-   result_color1 = (check.x == 1) ? colorHalftone(texture0, angle, colors, border, min_size, max_size, t1, t2, t3, t4, invert, mode, 0) : result_color1;
-   result_color2 = (check.y == 1) ? colorHalftone(texture0, angle, colors, border, min_size, max_size, t1, t2, t3, t4, invert, mode, 1) : result_color2;
-   result_color3 = (check.z == 1) ? colorHalftone(texture0, angle, colors, border, min_size, max_size, t1, t2, t3, t4, invert, mode, 2) : result_color3;
-   vec4 final_color = (mode == 1) ? result_color1 + result_color2 + result_color3 + bg_color : result_color1 * result_color2 * result_color3 * bg_color;
+   result_color1 = (check.x == 1.0) ? colorHalftone(texture0, angle, colors, border, min_size, max_size, t1, t2, t3, t4, invert, mode, 0) : result_color1;
+   result_color2 = (check.y == 1.0) ? colorHalftone(texture0, angle, colors, border, min_size, max_size, t1, t2, t3, t4, invert, mode, 1) : result_color2;
+   result_color3 = (check.z == 1.0) ? colorHalftone(texture0, angle, colors, border, min_size, max_size, t1, t2, t3, t4, invert, mode, 2) : result_color3;
+   vec4 final_color = (mode == 1.0) ? result_color1 + result_color2 + result_color3 + bg_color : result_color1 * result_color2 * result_color3 * bg_color;
 
    FragColor = vec4(final_color.rgb, alpha);
 }
