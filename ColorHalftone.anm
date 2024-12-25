@@ -1,58 +1,28 @@
---track0:サイズ,0,1000,100
---track1:ぼかし幅,0,100,0
---track2:最小サイズ,0,100,0
---track3:最大サイズ,0,200,110
+--track0:サイズ,0,100,0,0.1
+--track1:半径,0,200,120,0.1
+--track2:トーン小,0,100,0,0.1
+--track3:トーン大,0,100,100,0.1
 --check0:再読込,0
---dialog:色1[表示]/chk,_0=1;色2[表示]/chk,_1=1;色3[表示]/chk,_2=1;色1/col,_3=0x00ffff;色2/col,_4=0xff00ff;色3/col,_5=0xffff00;背景色/col,_6=0xffffff;モード[0-1],_7=0;反転/chk,_8=0;滑らかさ[0-100],_9=1;角度,_10={15,75,30};ぼかし幅,_11={nil,nil,nil};最小サイズ,_12={nil,nil,nil};最大サイズ,_13={nil,nil,nil}; 
+--dialog:色1[表示]/chk,_0=1;色2[表示]/chk,_1=1;色3[表示]/chk,_2=1;色1/col,_3=0x00ffff;色2/col,_4=0xff00ff;色3/col,_5=0xffff00;背景色/col,_6=0xffffff;角度1,_7=15;角度2,_8=75;角度3,_9=30;混色方法[0:減法/1:加法]/chk,_10=0;滑らかさ[0-100],_11=1;
 
-local check1 = _0
-local check2 = _1
-local check3 = _2
-_0 = nil _1 = nil _2 = nil
-
-local r0, g0, b0 = RGB(_3)
-local r1, g1, b1 = RGB(_4)
-local r2, g2, b2 = RGB(_5)
-local r3, g3, b3 = RGB(_6)
-_3 = nil _4 = nil _5 = nil _6 = nil
-
-local mode = ((tonumber(_7) or 0) <= 0) and 0 or 1
-local invert = _8
-local blur = math.min(tonumber(_9) or 0, 100)
-obj.effect("ぼかし", "範囲", blur, "縦横比", 0, "光の強さ", 0, "サイズ固定", 1)
-_7 = nil _8 = nil _9 = nil
-
-local angle1, angle2, angle3
-if _10 then
-    angle1 = tonumber(_10[1]) or 0
-    angle2 = tonumber(_10[2]) or 0
-    angle3 = tonumber(_10[3]) or 0
+local function rotate(angle)
+    angle = math.rad(angle)
+    return { math.cos(angle), -math.sin(angle),
+             math.sin(angle),  math.cos(angle) }
 end
-_10 = nil
 
-local border1, border2, border3
-if _11 then
-    border1 = (tonumber(_11[1]) or -1) * 0.01
-    border2 = (tonumber(_11[2]) or -1) * 0.01
-    border3 = (tonumber(_11[3]) or -1) * 0.01
-end
-_11 = nil
-
-local min_size1, min_size2, min_size3
-if _12 then
-    min_size1 = (tonumber(_12[1]) or -1) * 0.01
-    min_size2 = (tonumber(_12[2]) or -1) * 0.01
-    min_size3 = (tonumber(_12[3]) or -1) * 0.01
-end
-_12 = nil
-
-local max_size1, max_size2, max_size3
-if _13 then
-    max_size1 = (tonumber(_13[1]) or -1) * 0.01
-    max_size2 = (tonumber(_13[2]) or -1) * 0.01
-    max_size3 = (tonumber(_13[3]) or -1) * 0.01
-end
-_13 = nil
+local chk1       = _0      _0 = nil
+local chk2       = _1      _1 = nil
+local chk3       = _2      _2 = nil
+local r0, g0, b0 = RGB(_3) _3 = nil
+local r1, g1, b1 = RGB(_4) _4 = nil
+local r2, g2, b2 = RGB(_5) _5 = nil
+local r3, g3, b3 = RGB(_6) _6 = nil
+local angle1     = _7 or 0 _7 = nil
+local angle2     = _8 or 0 _8 = nil
+local angle3     = _9 or 0 _9 = nil
+local mix_mode   = _10     _10 = nil
+local blur_strength = math.min(math.max(_11 or 0, 0), 100) _11 = nil
 
 local GLShaderKit = require "GLShaderKit"
 
@@ -61,6 +31,7 @@ local force_reload = obj.check0
 
 local VERTEX_NUM = 1
 
+obj.effect("ぼかし", "範囲", blur_strength, "サイズ固定", 1)
 local data, w, h = obj.getpixeldata()
 
 if GLShaderKit.isInitialized() then
@@ -72,29 +43,31 @@ if GLShaderKit.isInitialized() then
     GLShaderKit.setFloat("totalTime", obj.totaltime)
     GLShaderKit.setInt("frame", obj.frame)
     GLShaderKit.setInt("totalFrame", obj.totalframe)
-    GLShaderKit.setFloat("track", (500 - obj.track0 * 0.5) * (math.min(w, h)/2000.0), obj.track1*0.01, obj.track2*0.01, obj.track3*0.01)
-
-    GLShaderKit.setFloat("color1", r0/255, g0/255, b0/255)
-    GLShaderKit.setFloat("color2", r1/255, g1/255, b1/255)
-    GLShaderKit.setFloat("color3", r2/255, g2/255, b2/255)
-    GLShaderKit.setFloat("color4", r3/255, g3/255, b3/255)
-    GLShaderKit.setFloat("angle", angle1, angle2, angle3)
-    GLShaderKit.setFloat("check", check1, check2, check3)
-    GLShaderKit.setFloat("border", border1, border2, border3)
-    GLShaderKit.setFloat("min_size", min_size1, min_size2, min_size3)
-    GLShaderKit.setFloat("max_size", max_size1, max_size2, max_size3)
-    GLShaderKit.setFloat("mode", mode)
-    GLShaderKit.setFloat("invert", invert)
-
+    GLShaderKit.setFloat("track", obj.track0, obj.track1, obj.track2, obj.track3)
     GLShaderKit.setTexture2D(0, data, w, h)
-    GLShaderKit.draw("TRIANGLES", data, w, h)
 
+    GLShaderKit.setFloat("aspect_ratio", w / h)
+
+    GLShaderKit.setFloat("tone_size", (0.25 - obj.track0 / 400.0) * math.max(w, h));
+    GLShaderKit.setFloat("radius", obj.track1 / 200)
+    GLShaderKit.setFloat("min_radius", obj.track2 / 100)
+    GLShaderKit.setFloat("max_radius", 1 - obj.track3 / 100)
+
+    GLShaderKit.setFloat("visibility", chk1, chk2, chk3)
+    GLShaderKit.setFloat("tone_color1", r0 / 255, g0 / 255, b0 / 255)
+    GLShaderKit.setFloat("tone_color2", r1 / 255, g1 / 255, b1 / 255)
+    GLShaderKit.setFloat("tone_color3", r2 / 255, g2 / 255, b2 / 255)
+    GLShaderKit.setFloat("bg_color", r3 / 255, g3 / 255, b3 / 255)
+    GLShaderKit.setMatrix("rot1", "2x2", false, rotate(angle1))
+    GLShaderKit.setMatrix("rot2", "2x2", false, rotate(angle2))
+    GLShaderKit.setMatrix("rot3", "2x2", false, rotate(angle3))
+    GLShaderKit.setMatrix("rot1T", "2x2", true, rotate(angle1))
+    GLShaderKit.setMatrix("rot2T", "2x2", true, rotate(angle2))
+    GLShaderKit.setMatrix("rot3T", "2x2", true, rotate(angle3))
+    GLShaderKit.setFloat("mix_mode", mix_mode)
+
+    GLShaderKit.draw("TRIANGLES", data, w, h)
     GLShaderKit.deactivate()
-else
-    obj.setfont("MS UI Gothic", obj.track2 + 30)
-    obj.load("text", "ColorHalftone is not available on this device.\nColorHalftoneはこのデバイスでは使用できません。")
-    obj.draw()
-    --参考 https://github.com/Mr-Ojii/AviUtl-RotBlur_M-Script/blob/main/script/RotBlur_M.anm#L59-L63
 end
 
 obj.putpixeldata(data)
