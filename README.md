@@ -2,7 +2,7 @@
 
 カラーハーフトーン加工をする AviUtl スクリプトです。動作には karoterra氏の [GLShaderKit](https://github.com/karoterra/aviutl-GLShaderKit) が必要になります。
 
-![sample](assets\sample.png)
+![sample](/assets/sample.png)
 <a href="https://pixabay.com/photos/colorful-bird-parrot-nature-3635304/">Image</a> by <a href="https://pixabay.com/users/skitterphoto-324082/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=3635304">Rudy and Peter Skitterians</a> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=3635304">Pixabay</a>
 
 ## 導入方法
@@ -21,21 +21,21 @@
 ### トラックバー
 - #### サイズ
   トーン全体のサイズをパーセンテージで変更します。デフォルト値は `0` で、 `max(width,height)/4` の大きさになっています。
-  ![track0](assets\track0.png)
+  ![track0](/assets/track0.png)
 
 - #### 半径
   トーンひとつあたりの半径を変更します。デフォルト値は `120` です。
-  ![track1](assets\track1.png)
+  ![track1](/assets/track1.png)
 
 - #### トーン小
   小さいトーンの半径を変更します。デフォルト値は `0` です。
- ![track2](assets\track2.png)
+ ![track2](/assets/track2.png)
   - パラメーターが `0` のとき : 画像に基づいた大きさ  
   - パラメーターが `100` のとき : `半径` で設定した値
 
 - #### トーン大
   大きいトーンの半径を変更します。デフォルト値は `100` です。
-  ![track3](assets\track3.png)
+  ![track3](/assets/track3.png)
   - パラメーターが `0` のとき : `半径-100`
   - パラメーターが `100` のとき: 画像に基づいた大きさ
 
