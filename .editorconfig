@@ -1,0 +1,15 @@
+root = true
+
+[*]
+indent_size = 4
+indent_style = space
+trim_trailing_whitespace = true
+
+[*.anm]
+end_of_line = crlf
+
+[*.{yml,yaml}]
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false
