@@ -29,7 +29,7 @@ uniform mat2 rot3T;
 uniform float mix_mode;
 
 vec2 adjustAspectRatio(vec2 st, bool revert) {
-    st.x = mix(mix(st.x, (st.x - 0.5) * aspect_ratio + 0.5, step(1.0, aspect_ratio)), 
+    st.x = mix(mix(st.x, (st.x - 0.5) * aspect_ratio + 0.5, step(1.0, aspect_ratio)),
                mix(st.x, (st.x - 0.5) / aspect_ratio + 0.5, step(1.0, aspect_ratio)), revert);
     st.y = mix(mix((st.y - 0.5) / aspect_ratio + 0.5, st.y, step(1.0, aspect_ratio)),
                mix((st.y - 0.5) * aspect_ratio + 0.5, st.y, step(1.0, aspect_ratio)), revert);
@@ -51,11 +51,11 @@ vec2 scale(vec2 st, float n, bool scale_down) {
 }
 
 vec3 rgbToCmy(vec3 rgb) {
-   return vec3(1.0) - rgb;
+    return vec3(1.0) - rgb;
 }
 
 // 参考: https://qiita.com/aa_debdeb/items/b51529e6b0170f9c48e4
-float smoothThresholdA(float thr, float min_thr, float max_thr, float s, float x) {
+float smoothThreshold(float thr, float min_thr, float max_thr, float s, float x) {
     float inv_range = 1.0 / (max_thr - min_thr);
     float edge = thr + s * (thr - min_thr) * inv_range;
     return smoothstep(edge - s, edge, x);
@@ -86,7 +86,7 @@ vec3 colorHalftone(int idx, mat2 rot, mat2 rotT, vec3 tone_color) {
             uv = adjustAspectRatio(uv, true);  // アスペクト比を元に戻す
 
             vec3 rgb_color = texture(texture0, uv).rgb;
-            vec3 color_value = mix(rgbToCmy(rgb_color), rgb_color, step(1, mix_mode));
+            vec3 color_value = mix(rgbToCmy(rgb_color), rgb_color, step(1.0, mix_mode));
             color_value = pow(color_value, vec3(1 / 2.2));  // 微調整
 
             // サンプリングした色に基づいて半径の大きさを決定
@@ -98,10 +98,10 @@ vec3 colorHalftone(int idx, mat2 rot, mat2 rotT, vec3 tone_color) {
             // 隣接セルの中心への距離を計算
             vec2 diff = neighbor + vec2(0.5) - f_st;
             float dist = length(diff);
-            
+
             // 現在注目しているピクセルが半径より内側に位置する場合は 0、外側に位置する場合は 1 を返す
             // +-smoothnessの間に位置する場合は、トーンカラーと背景色の間を滑らかにブレンドする
-            float blend = smoothThresholdA(radius_value, 0.0, 1.0, smoothness, dist);
+            float blend = smoothThreshold(radius_value, 0.0, 1.0, smoothness, dist);
             result_color = mix(tone_color, result_color, blend);
         }
     }
