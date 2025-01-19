@@ -33,6 +33,8 @@ jobs:
       run: zip -r ColorHalftone_${{github.ref_name}}.zip ColorHalftone.anm ColorHalftone.frag README.md LICENSE.txt Licenses
 
     - name: Create release notes
-      run: gh release create "${VERSION}" --generate-notes ${{github.workspace}}/*.zip
+      run: |
+        find . -name \*.zip
+        gh release create "${VERSION}" --generate-notes ${{github.workspace}}/\*.zip
       env:
         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
