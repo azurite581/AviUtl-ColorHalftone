@@ -29,19 +29,13 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Check for latest tag
-      id: tag
-      run: |
-        latest_tag=$(git describe --tags --abbrev=0)
-        echo "version=${latest_tag}" >> "${GITHUB_OUTPUT}"
-
     - name: Create zip archive
       run: zip -r "ColorHalftone_${VERSION}.zip" ColorHalftone.anm ColorHalftone.frag README.md LICENSE.txt Licenses
       env:
-        VERSION: ${{steps.tag.outputs.version}}
+        VERSION: ${{github.ref_name}}
 
     - name: Create release notes
       run: gh release create "${VERSION}" --generate-notes ${{github.workspace}}/*.zip
       env:
-        VERSION: ${{steps.tag.outputs.version}}
+        VERSION: ${{github.ref_name}}
         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
